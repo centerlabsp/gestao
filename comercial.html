@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GESTÃO COMERCIAL</title>
+    <link rel="icon" type="image/png" href="icone.png">
+    
+    <style>
+        /* --- ESTILOS GERAIS (VERSÃO V97 - CÁLCULO PROGRESSO AJUSTADO PARA 18 ITENS) --- */
+        :root { --bg-color: #f4f5f7; --card-bg: #ffffff; --primary: #005f87; --text-color: #333; --border-radius: 6px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 10px; padding-bottom: 60px; font-size: 12px; }
+        
+        /* CABEÇALHO LIMPO */
+        .header-container { 
+            display: flex; align-items: center; justify-content: center; gap: 15px; 
+            margin-bottom: 15px; position: relative; 
+            padding: 10px; background: transparent;
+        }
+        .header-logo { max-height: 45px; width: auto; }
+        h1 { text-align: center; color: var(--primary); font-size: 1.6em; font-weight: 900; text-transform: uppercase; margin: 0; }
+        
+        /* FILTROS COMPACTOS */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; max-width: 1400px; margin-left: auto; margin-right: auto; background: #e9ecef; padding: 8px; border-radius: 6px; align-items: center; }
+        .filter-input { flex: 2; height: 30px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; } 
+        .filter-select { flex: 1; height: 30px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
+        .filter-count { font-weight: bold; color: #666; font-size: 11px; }
+
+        @media (max-width: 900px) { 
+            .header-container { flex-direction: column; text-align: center; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+        }
+
+        /* --- CARD VISUALIZAÇÃO --- */
+        .board-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: flex-start; min-height: 300px; }
+        
+        .card { 
+            background: var(--card-bg); 
+            width: 100%; 
+            max-width: 270px; 
+            border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            padding: 8px; 
+            border-top: none;
+            position: relative; transition: transform 0.2s; 
+            display: flex; flex-direction: column; gap: 4px; 
+        }
+        
+        /* LINHA 1: NOME CLIENTE + CONSULTOR */
+        .card-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 5px; }
+        .card-client { font-size: 1.1em; font-weight: 900; color: #000; text-transform: uppercase; line-height: 1.1; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .consultant-badge { 
+            background-color: #e9ecef; color: #555; border: 1px solid #ccc; 
+            font-weight: 800; font-size: 0.6em; padding: 2px 5px; 
+            border-radius: 3px; text-transform: uppercase; white-space: nowrap;
+        }
+
+        /* LINHA 2: CIDADE */
+        .card-city { font-size: 0.8em; font-style: italic; color: #666; margin-top: -3px; text-transform: uppercase; margin-bottom: 2px;}
+
+        /* LINHA 3: MÁQUINA + S/N */
+        .machine-container {
+            background-color: #eef6fc; border: 1px solid #d1e7dd;
+            border-radius: 4px; padding: 5px;
+            display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            gap: 0px; 
+            margin-bottom: 2px;
+        }
+        .machine-name { 
+            color: #005f87; font-weight: 900; font-size: 0.9em; 
+            text-transform: uppercase; text-align: center; line-height: 1.2;
+        }
+        .sn-badge { 
+            color: #666; font-size: 0.7em; font-weight: 600; 
+            white-space: nowrap; text-align: center;
+        }
+
+        /* LINHA 4: STATUS GRID */
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 2px; }
+        .status-col { text-align: center; } 
+        .status-col label { display: block; font-size: 0.65em; color: #666; margin-bottom: 1px; font-weight: bold; text-transform: uppercase; }
+        
+        .tech-status-badge, .process-text { 
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 20px; 
+            border-radius: 3px; font-weight: 800; font-size: 0.7em; 
+            text-transform: uppercase; box-sizing: border-box; 
+            border: 1px solid transparent; white-space: nowrap; overflow: hidden;
+        }
+
+        .tech-status-badge { color: #333; background: #e2e3e5; }
+        .process-text { color: #000; background: #fff3cd; border-color: #ffeeba; }
+
+        /* LINHA 5 e 6: DATAS GRID */
+        .dates-grid-card { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 2px; }
+        .date-box { 
+            border: 1px solid #eee; border-radius: 4px; padding: 2px; 
+            text-align: center; background: #fcfcfc;
+        }
+        .date-box.golive { background: #f0fff4; border-color: #d1e7dd; }
+        
+        .date-label { display: block; font-size: 0.6em; font-weight: 800; color: #666; text-transform: uppercase; margin-bottom: 0px; }
+        .date-val { display: block; font-size: 0.85em; font-weight: 700; color: #333; }
+        .golive .date-label { color: #198754; } 
+        .golive .date-label::before { content: '🚀 '; }
+
+        /* BARRA DE PROGRESSO */
+        .progress-container { background-color: #e0e0e0; border-radius: 8px; height: 12px; width: 100%; margin: 4px 0; overflow: hidden; position: relative; }
+        .progress-bar { 
+            height: 100%; width: 0%; text-align: center; line-height: 12px; 
+            color: #fff; font-size: 9px; font-weight: bold; 
+            transition: width 0.3s; background-color: #dc3545; 
+        }
+        
+        /* RODAPÉ COM COMENTÁRIO */
+        /* Aumentei levemente o max-height (de 40px para 50px) para caber a data sem quebrar layout, mantendo estilo */
+        .footer-comment {
+            background-color: #fff8e1; border: 1px solid #ffeeba;
+            border-radius: 4px; padding: 5px; margin-top: 4px;
+            font-size: 0.75em; color: #555;
+            max-height: 55px; overflow: hidden; text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+        .footer-comment strong { color: #d66606; display: block; font-size: 0.9em; margin-bottom: 2px; }
+
+        .last-updated { font-size: 0.6em; color: #888; text-align: right; margin-top: 2px; font-style: italic; }
+        #status-indicator { text-align: center; font-weight: bold; color: #666; font-size: 0.8em; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <img src="logo.png" onerror="this.style.display='none'" alt="Logo" class="header-logo">
+        <h1>GESTÃO COMERCIAL - EQUIPAMENTOS CLIENTES</h1>
+    </div>
+
+    <div id="status-indicator">Conectando... ⏳</div>
+
+    <div class="filter-bar">
+        <span style="font-weight:bold;">🔎 Filtrar:</span>
+        <input type="text" class="filter-input" id="searchBar" placeholder="Busque por cliente, máquina..." oninput="window.filterCards()">
+        <select class="filter-select" id="filterStatus" onchange="window.filterCards()">
+            <option value="TODOS">Todos os Status</option>
+            <option value="URGENTE">⚠️ URGENTE</option>
+            <option value="NEGOCIAÇÃO">NEGOCIAÇÃO</option>
+            <option value="MANUTENÇÃO">MANUTENÇÃO</option>
+            <option value="TRANSPORTE">TRANSPORTE</option>
+            <option value="INSTALAÇÃO">INSTALAÇÃO</option>
+            <option value="TREINAMENTO">TREINAMENTO</option>
+            <option value="FINALIZADO">FINALIZADO</option>
+        </select>
+        <span class="filter-count" id="cardCount">Mostrando: 0</span>
+    </div>
+
+    <div class="board-container" id="board"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA3Xg_0LLGDVeRv5jVGnSFESc8I4Z1fsA8",
+            authDomain: "projeto-atellica.firebaseapp.com",
+            projectId: "projeto-atellica",
+            storageBucket: "projeto-atellica.firebasestorage.app",
+            messagingSenderId: "422526536640",
+            appId: "1:422526536640:web:0afcb40f3e79ccf93e9625"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        // Usa o mesmo banco do index.html para leitura (apenas visualização)
+        const boardRef = doc(db, "scrum_board", "siemens_db_oficial");
+
+        let currentCardsData = [];
+
+        const techStatusMap = {
+            'DEMANDAS': { label: 'AGUARDANDO', color: '#6c757d', bg: '#e2e3e5' }, 
+            'REPARO': { label: 'EM REPARO', color: '#fff', bg: '#fd7e14' }, 
+            'VAL_TEC': { label: 'VAL. TÉCNICA', color: '#000', bg: '#ffc107' }, 
+            'VAL_CIEN': { label: 'VAL. CIENTÍFICA', color: '#000', bg: '#0dcaf0' }, 
+            'VISTORIA': { label: 'VISTORIA FINAL', color: '#fff', bg: '#0d6efd' }, 
+            'EMBALAGEM': { label: 'EMBALAGEM', color: '#fff', bg: '#6f42c1' }, 
+            'PRONTO': { label: 'PRONTO', color: '#fff', bg: '#198754' } 
+        };
+
+        window.filterCards = function() {
+            const searchText = document.getElementById('searchBar').value.toLowerCase();
+            const statusFilter = document.getElementById('filterStatus').value;
+            let visibleCount = 0;
+            
+            document.querySelectorAll('.card').forEach(card => {
+                const isDeleted = card.getAttribute('data-deleted') === 'true';
+                if (isDeleted) { card.style.display = "none"; return; }
+
+                const isUrgent = card.getAttribute('data-urgent') === 'true';
+                const text = (card.getAttribute('data-client') + card.getAttribute('data-machine')).toLowerCase();
+                const status = card.getAttribute('data-status');
+                
+                let matchesStatus = (statusFilter === "TODOS" || status === statusFilter);
+                if (statusFilter === "URGENTE") matchesStatus = isUrgent;
+
+                if (text.includes(searchText) && matchesStatus) { 
+                    card.style.display = "flex"; visibleCount++; 
+                } else { 
+                    card.style.display = "none"; 
+                }
+            });
+            document.getElementById('cardCount').innerText = `Mostrando: ${visibleCount}`;
+        }
+
+        function renderBoard(cards) {
+            cards.sort((a, b) => {
+                const d1 = new Date(a.dateGoLive || '9999-12-31'); 
+                const d2 = new Date(b.dateGoLive || '9999-12-31'); 
+                return d1 - d2; 
+            });
+
+            const board = document.getElementById('board'); board.innerHTML = ''; 
+            
+            cards.forEach(data => {
+                if(data.isDeleted) return;
+
+                const card = document.createElement('div'); card.className = 'card';
+                card.setAttribute('data-client', data.client || ''); 
+                card.setAttribute('data-machine', data.machine || '');
+                card.setAttribute('data-status', data.statusVal);
+                card.setAttribute('data-urgent', data.isUrgent);
+                card.setAttribute('data-deleted', data.isDeleted);
+
+                const techStatus = data.technicalStatus || 'DEMANDAS';
+                const techInfo = techStatusMap[techStatus] || techStatusMap['DEMANDAS'];
+                const fmtDate = (d) => d ? d.split('-').reverse().join('/') : '---';
+
+                // --- CÁLCULO DA BARRA DE PROGRESSO CORRIGIDO (DIVISOR 18) ---
+                const totalChecks = 18; // AJUSTADO PARA BATER COM O CÁLCULO DE 75% -> 100%
+                const checkedCount = (data.checkedIndices || []).length;
+                
+                // Prioriza valor salvo, se não, calcula com base em 18
+                let pct = (data.progress !== undefined) 
+                          ? parseInt(data.progress) 
+                          : Math.round((checkedCount / totalChecks) * 100);
+                
+                if (pct > 100) pct = 100; // Trava de segurança
+
+                // Cores do Index
+                let pColor = '#dc3545'; // Vermelho (0-29%)
+                if(pct >= 30) pColor = '#ffc107'; // Amarelo (30-69%)
+                if(pct >= 70) pColor = '#0dcaf0'; // Azul (70-99%)
+                if(pct === 100) pColor = '#198754'; // Verde (100%)
+
+                // COR DA BORDA PELO STATUS
+                let statusColor = '#005f87';
+                if(data.statusVal === 'MANUTENÇÃO') statusColor = '#fd7e14';
+                if(data.statusVal === 'TRANSPORTE') statusColor = '#6f42c1';
+                if(data.statusVal === 'INSTALAÇÃO') statusColor = '#ffc107';
+                if(data.statusVal === 'TREINAMENTO') statusColor = '#20c997';
+                if(data.statusVal === 'FINALIZADO') statusColor = '#28a745';
+                card.style.borderTopColor = statusColor;
+
+                // --- RECUPERA COMENTÁRIO COMERCIAL (COM DATA E HORA) ---
+                let lastCommentHTML = '<span style="color:#ccc;">Sem observações comerciais.</span>';
+                
+                if (data.comments && Array.isArray(data.comments)) {
+                    // 1. Filtra só os que são objetos E têm stage 'COMERCIAL'
+                    const commComments = data.comments.filter(c => typeof c === 'object' && c.stage === 'COMERCIAL');
+                    
+                    // 2. Se houver, pega o último da lista
+                    if (commComments.length > 0) {
+                        const last = commComments[commComments.length - 1];
+                        // Formata Texto + Data/Hora
+                        lastCommentHTML = `
+                            <div style="display:flex; flex-direction:column;">
+                                <span>${last.text}</span>
+                                <span style="text-align:right; font-size:0.85em; color:#999; margin-top:2px;">📅 ${last.time}</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                card.innerHTML = `
+                    <div class="card-header-row">
+                        <div class="card-client" title="${data.client}">${data.client}</div>
+                        <div class="consultant-badge">${data.consultant || '---'}</div>
+                    </div>
+                    
+                    <div class="card-city">${data.city || '---'}</div>
+                    
+                    <div class="machine-container">
+                        <span class="machine-name">${data.machine}</span>
+                        <span class="sn-badge">S/N: ${data.serialsText || '--'}</span>
+                    </div>
+
+                    <div class="status-grid">
+                        <div class="status-col">
+                            <label>GESTÃO TÉCNICA</label> 
+                            <div class="tech-status-badge" style="background:${techInfo.bg}; color:${techInfo.color};">
+                                ${techInfo.label}
+                            </div>
+                        </div>
+                        <div class="status-col">
+                            <label>GESTÃO DE CONTRATOS</label>
+                            <div class="process-text">${data.statusVal || '---'}</div>
+                        </div>
+                    </div>
+
+                    <div class="dates-grid-card">
+                        <div class="date-box">
+                            <span class="date-label">Início Contrato</span>
+                            <span class="date-val">${fmtDate(data.dateContract)}</span>
+                        </div>
+                        <div class="date-box golive">
+                            <span class="date-label">Go Live</span>
+                            <span class="date-val">${fmtDate(data.dateGoLive)}</span>
+                        </div>
+                        <div class="date-box">
+                            <span class="date-label">Prev. Liberação</span>
+                            <span class="date-val">${fmtDate(data.techReleaseForecast)}</span> 
+                        </div>
+                        <div class="date-box">
+                            <span class="date-label">Prev. Instalação</span>
+                            <span class="date-val">${fmtDate(data.datePrevInst)}</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width:${pct}%; background-color:${pColor};">${pct}%</div>
+                    </div>
+
+                    <div class="footer-comment">
+                        <strong>📢 Obs. Comercial:</strong>
+                        ${lastCommentHTML}
+                    </div>
+
+                    <div class="last-updated">Ult. Atualização: <span>${data.lastUpdated || '---'}</span></div>
+                `;
+                board.appendChild(card);
+            });
+        }
+
+        onSnapshot(boardRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                currentCardsData = data.cards || [];
+                document.getElementById('status-indicator').innerText = "Online 🟢";
+                renderBoard(currentCardsData);
+                window.filterCards();
+            } else {
+                document.getElementById('status-indicator').innerText = "Sem dados";
+            }
+        });
+    </script>
+</body>
+</html>

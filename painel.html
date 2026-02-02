@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Técnico - CenterlabSP</title>
+    <link rel="icon" type="image/png" href="icone.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .hub-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        .hub-logo {
+            height: 60px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #005f87;
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #005f87;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            border: 1px solid #004a69;
+        }
+        .menu-btn:hover {
+            background-color: #004466;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,95,135,0.3);
+        }
+        .btn-repair { background-color: #fd7e14; border-color: #e36d0b; }
+        .btn-repair:hover { background-color: #d66606; }
+        
+        .btn-agenda { background-color: #28a745; border-color: #1e7e34; }
+        .btn-agenda:hover { background-color: #218838; }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .back-link:hover { text-decoration: underline; color: #333; }
+    </style>
+</head>
+<body>
+
+    <div class="hub-container">
+        <img src="icone.png" alt="Logo" class="hub-logo">
+        <h1>Área Técnica</h1>
+
+        <a href="tecnica.html" class="menu-btn">
+            ⚙️ Gestão Técnica
+        </a>
+
+        <a href="repair.html" class="menu-btn btn-repair">
+            🔧 Gestão Repair
+        </a>
+
+        <a href="agendamentos.html" class="menu-btn btn-agenda">
+            📅 Gestão Agendamentos
+        </a>
+
+        <a href="index.html" class="back-link">← Voltar para Gestão de Contratos</a>
+    </div>
+
+</body>
+</html>

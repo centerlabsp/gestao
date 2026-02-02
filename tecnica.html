@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Técnica - CenterlabSP</title>
+    <link rel="icon" type="image/png" href="icone.png">
+
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch-polyfill@1.0.0/DragDropTouch.min.js"></script>
+
+    <style>
+        /* --- ESTILO KANBAN CLEAN --- */
+        :root { --bg-color: #ffffff; --column-bg: #f4f5f7; --card-bg: #ffffff; --text-color: #172b4d; --header-bg: #005f87; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; overflow-x: auto; height: 100vh; display: flex; flex-direction: column; }
+        
+        .tech-header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative;
+            background-color: var(--header-bg); 
+            padding: 10px 20px; 
+            color: white; 
+            flex-shrink: 0; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        
+        .header-content { display: flex; align-items: center; gap: 15px; }
+        .tech-logo { height: 40px; background: white; padding: 5px; border-radius: 5px; }
+        h1 { margin: 0; font-size: 1.4em; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; }
+
+        .tech-nav-btn { 
+            position: absolute;
+            right: 20px;
+            background-color: #ffffff; 
+            color: #005f87; 
+            padding: 8px 15px; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: 800; 
+            font-size: 0.9em; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+            transition: 0.2s;
+            white-space: nowrap; 
+        }
+        .tech-nav-btn:hover { background-color: #e9ecef; }
+
+        .kanban-board { display: flex; gap: 10px; align-items: flex-start; padding: 15px; height: 100%; overflow-x: auto; }
+        
+        .kanban-column { 
+            background-color: var(--column-bg); 
+            width: 250px; 
+            min-width: 250px; 
+            border-radius: 8px; 
+            padding: 8px; 
+            display: flex; flex-direction: column; 
+            max-height: calc(100vh - 100px); 
+            border: 1px solid #e0e0e0;
+        }
+
+        .column-header { font-weight: 800; color: #005f87; padding: 0 2px 10px 2px; text-transform: uppercase; font-size: 0.8em; border-bottom: 2px solid #ccc; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .card-count { background: #d1d5db; color: #333; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold;}
+        .card-list { flex: 1; overflow-y: auto; min-height: 100px; padding-right: 5px; }
+        .card-list::-webkit-scrollbar { width: 6px; }
+        .card-list::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+
+        .tech-card { 
+            background-color: var(--card-bg); border-radius: 6px; padding: 10px; margin-bottom: 10px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: grab; 
+            border-left: 5px solid #ccc; 
+            transition: transform 0.1s, box-shadow 0.1s; font-size: 11px; 
+            border-top: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee; 
+            touch-action: pan-y; 
+        }
+        .tech-card:active { cursor: grabbing; }
+        .tech-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+
+        .t-client { font-weight: 800; font-size: 1.1em; color: #333; margin-bottom: 2px; display: block; }
+        .t-city { font-size: 0.85em; color: #666; font-style: italic; display: block; margin-bottom: 5px;}
+        .t-machine { font-size: 0.95em; color: #005f87; font-weight: 700; display: block; margin-bottom: 2px; }
+        .t-sn-badge { background-color: #e9ecef; color: #333; border: 1px solid #ccc; border-radius: 3px; padding: 2px 6px; font-size: 0.85em; font-weight: 600; display: inline-block; margin-top: 2px;}
+        
+        .badges-container { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+        .badge { color: white; font-size: 0.7em; font-weight: bold; padding: 1px 5px; border-radius: 3px; text-transform: uppercase; display: inline-block; }
+        .badge-contract { background-color: #28a745; }
+        .badge-consultant { background-color: #6c757d; }
+        .badge-urgent { background-color: #dc3545; animation: pulse 2s infinite; }
+        
+        .tech-status-label { display: inline-block; margin-top: 5px; padding: 2px 6px; border-radius: 4px; font-size: 0.75em; font-weight: 800; text-transform: uppercase; border: 1px solid transparent; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
+
+        .col-demandas .tech-card { border-left-color: #dc3545; }
+        .col-reparo .tech-card { border-left-color: #fd7e14; }
+        .col-val-tec .tech-card { border-left-color: #ffc107; }
+        .col-val-cien .tech-card { border-left-color: #0dcaf0; }
+        .col-vistoria .tech-card { border-left-color: #0d6efd; }
+        .col-embalagem .tech-card { border-left-color: #6f42c1; }
+        .col-pronto .tech-card { border-left-color: #198754; }
+
+        /* --- MODAL OTIMIZADO (Menor) --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: flex-start; overflow-y: auto; padding-top: 30px; }
+        
+        .modal-box { 
+            background: white; 
+            width: 90%; 
+            max-width: 600px; /* Reduzido de 750px */
+            padding: 20px;    /* Reduzido de 25px */
+            border-radius: 8px; 
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3); 
+            margin-bottom: 50px; 
+            position: relative; 
+            font-size: 12px;  /* Fonte base levemente menor */
+        }
+        
+        .modal-close { position: absolute; top: 10px; right: 15px; font-size: 1.5em; cursor: pointer; color: #666; font-weight: bold;}
+        .modal-title { font-size: 1.3em; font-weight: 900; color: #005f87; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 5px; padding-right: 20px;}
+        
+        /* Grid de Info Compacto */
+        .info-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
+            margin-bottom: 15px; background: #f0f4f8; 
+            padding: 10px; border-radius: 6px; 
+        }
+        .info-item label { display: block; font-size: 0.8em; color: #555; font-weight: bold; text-transform: uppercase; margin-bottom: 1px;}
+        .info-item span { font-size: 0.95em; font-weight: 600; color: #333; }
+        
+        .tech-form-group { margin-bottom: 10px; } /* Margem reduzida */
+        .tech-form-group label { display: block; font-size: 0.85em; font-weight: bold; margin-bottom: 3px; color: #333;}
+        .tech-select, .tech-input { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1em;}
+
+        /* Grid de Checklist Compacto */
+        .items-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; 
+            margin-bottom: 15px; border: 1px solid #eee; 
+            padding: 10px; border-radius: 6px; background: #fafafa;
+        }
+        .check-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; font-weight: 600; color: #444;}
+        .check-item select { width: 90px; padding: 2px; font-size: 0.9em; border-radius: 4px; border: 1px solid #ccc;}
+
+        .comment-list { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; border: 1px solid #eee; margin-top: 8px; background: #fff; border-radius: 4px;}
+        .comment-item { padding: 6px; border-bottom: 1px solid #eee; font-size: 0.9em; background: #fff; display: flex; flex-direction: column; gap: 3px;}
+        .comment-item:nth-child(odd) { background: #f9f9f9; }
+        .comment-header-row { display: flex; justify-content: space-between; align-items: center; }
+        .comment-meta { font-size: 0.85em; font-weight: bold; color: #005f87; }
+        
+        .save-btn { 
+            background: #28a745; color: white; border: none; 
+            padding: 10px 20px; width: 100%; border-radius: 5px; 
+            font-weight: bold; cursor: pointer; margin-top: 10px; 
+            font-size: 1.1em; transition: 0.2s;
+        }
+        .save-btn:hover { background: #218838; }
+        
+        #t-status-group { background-color: #eef6fc; padding: 8px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #b6d4fe; }
+        
+        optgroup { color: #005f87; font-weight: bold; font-style: normal; background: #eef6fc; }
+        option { color: #333; padding: 5px; background: #fff; }
+
+        @media (max-width: 900px) {
+            .tech-header { flex-direction: column; gap: 10px; }
+            .tech-nav-btn { position: static; display: block; width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tech-header">
+        <div class="header-content">
+            <img src="icone.png" alt="Logo" class="tech-logo">
+            <h1>GESTÃO TÉCNICA - LIBERAÇÃO DE EQUIPAMENTOS</h1>
+        </div>
+        <a href="painel.html" class="tech-nav-btn">⚙️ Painel Técnico</a>
+    </div>
+
+    <div class="kanban-board">
+        <div class="kanban-column col-demandas" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-DEMANDAS"><div class="column-header">Demandas <span class="card-count" id="count-DEMANDAS">0</span></div><div class="card-list"></div></div>
+        <div class="kanban-column col-reparo" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-REPARO"><div class="column-header">Em Reparo <span class="card-count" id="count-REPARO">0</span></div><div class="card-list"></div></div>
+        <div class="kanban-column col-val-tec" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-VAL_TEC"><div class="column-header">Validação Técnica <span class="card-count" id="count-VAL_TEC">0</span></div><div class="card-list"></div></div>
+        <div class="kanban-column col-val-cien" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-VAL_CIEN"><div class="column-header">Validação Científica <span class="card-count" id="count-VAL_CIEN">0</span></div><div class="card-list"></div></div>
+        <div class="kanban-column col-vistoria" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-VISTORIA"><div class="column-header">Vistoria Final <span class="card-count" id="count-VISTORIA">0</span></div><div class="card-list"></div></div>
+        <div class="kanban-column col-embalagem" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-EMBALAGEM"><div class="column-header">Embalagem <span class="card-count" id="count-EMBALAGEM">0</span></div><div class="card-list"></div></div>
+        <div class="kanban-column col-pronto" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-PRONTO"><div class="column-header">Pronto <span class="card-count" id="count-PRONTO">0</span></div><div class="card-list"></div></div>
+    </div>
+
+    <div class="modal-overlay" id="techModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="window.closeModal()">×</span>
+            <div class="modal-title" id="m-title"></div>
+            
+            <div class="info-grid">
+                <div class="info-item"><label>Local Manutenção:</label><span id="m-loc"></span></div>
+                <div class="info-item"><label>Contrato Assinado:</label><span id="m-contrato"></span></div>
+                <div class="info-item"><label>Início Processo:</label><span id="m-inicio"></span></div>
+                <div class="info-item"><label>Prev. Instalação:</label><span id="m-prev"></span></div>
+                <div class="info-item"><label>Go Live:</label><span id="m-golive"></span></div>
+            </div>
+
+            <div class="tech-form-group" id="t-status-group">
+                <label style="color:#005f87; font-weight:900;">📍 ALTERAR FASE / STATUS (Mover Card):</label>
+                <select class="tech-select" id="t-status">
+                    <option value="DEMANDAS">DEMANDAS (AGUARDANDO)</option>
+                    <option value="REPARO">EM REPARO</option>
+                    <option value="VAL_TEC">VALIDAÇÃO TÉCNICA</option>
+                    <option value="VAL_CIEN">VALIDAÇÃO CIENTÍFICA</option>
+                    <option value="VISTORIA">VISTORIA FINAL</option>
+                    <option value="EMBALAGEM">EMBALAGEM</option>
+                    <option value="PRONTO">PRONTO</option>
+                </select>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                <div class="tech-form-group">
+                    <label>Início Manutenção:</label>
+                    <input type="date" class="tech-input" id="t-start-date">
+                </div>
+                <div class="tech-form-group">
+                    <label>Prev. Liberação:</label>
+                    <input type="date" class="tech-input" id="t-release-date">
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:5px;">
+                <div class="tech-form-group">
+                    <label>Técnico Responsável:</label>
+                    <select class="tech-select" id="t-responsible"></select>
+                </div>
+                <div class="tech-form-group">
+                    <label>Assessor Responsável:</label>
+                    <select class="tech-select" id="t-advisor"></select>
+                </div>
+            </div>
+
+            <label style="font-weight:bold; display:block; margin-bottom:5px; color:#333;">Itens Necessários:</label>
+            <div class="items-grid">
+                <div class="check-item"><span>No-break</span> <select id="chk-nobreak"><option value="Pendente">Pendente</option><option value="Conferido">Conferido</option><option value="N/A">N/A</option></select></div>
+                <div class="check-item"><span>Estação de Água</span> <select id="chk-agua"><option value="Pendente">Pendente</option><option value="Conferido">Conferido</option><option value="N/A">N/A</option></select></div>
+                <div class="check-item"><span>Computador Completo</span> <select id="chk-pc"><option value="Pendente">Pendente</option><option value="Conferido">Conferido</option><option value="N/A">N/A</option></select></div>
+                <div class="check-item"><span>Acessórios Equip.</span> <select id="chk-acess"><option value="Pendente">Pendente</option><option value="Conferido">Conferido</option><option value="N/A">N/A</option></select></div>
+            </div>
+
+            <label style="font-weight:bold; display:block; margin-bottom:5px; color:#333;">Comentários (Gestão e Técnica):</label>
+            <div style="display:flex; gap:8px;">
+                <input type="text" class="tech-input" id="t-comment-text" placeholder="Adicionar observação...">
+                <button onclick="window.addTechComment()" style="width:40px; cursor:pointer; background:#28a745; color:white; border:none; border-radius:4px; font-size:1.1em;">💾</button>
+            </div>
+            <ul class="comment-list" id="t-comments-list"></ul>
+
+            <button class="save-btn" onclick="window.saveTechData()">SALVAR E FECHAR</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, updateDoc } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA3Xg_0LLGDVeRv5jVGnSFESc8I4Z1fsA8",
+            authDomain: "projeto-atellica.firebaseapp.com",
+            projectId: "projeto-atellica",
+            storageBucket: "projeto-atellica.firebasestorage.app",
+            messagingSenderId: "422526536640",
+            appId: "1:422526536640:web:0afcb40f3e79ccf93e9625"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const boardRef = doc(db, "scrum_board", "siemens_db_oficial");
+
+        let currentCardsData = [];
+        let currentModalId = null;
+        let editingCommentId = null;
+
+        const techStatusMap = {
+            'DEMANDAS': { label: 'AGUARDANDO TÉCNICO', color: '#6c757d' }, 
+            'REPARO': { label: 'EM REPARO', color: '#fd7e14' },
+            'VAL_TEC': { label: 'VAL. TÉCNICA', color: '#ffc107' },
+            'VAL_CIEN': { label: 'VAL. CIENTÍFICA', color: '#0dcaf0' },
+            'VISTORIA': { label: 'VISTORIA FINAL', color: '#0d6efd' },
+            'EMBALAGEM': { label: 'EMBALAGEM', color: '#6f42c1' },
+            'PRONTO': { label: 'PRONTO', color: '#198754' }
+        };
+
+        const techsByRegion = {
+            "TÉCNICO SP": [ "Daniel Ourique", "Daniel Serrano", "Eduardo Rafael", "Fabio Mazine", "Guilherme Yoshida", "Matheus Pereira", "Oseias Barbosa", "Rafael Rodrigues", "Robson Miranda", "Rubens Emerson", "Vanleno Câmara", "Wesley Monteiro" ].sort(),
+            "TÉCNICO RP": [ "Alexandre Chiang", "Fred Shigeyo", "Mário Luiz", "Rafael Aihara", "Rainan Hanzi" ].sort(),
+            "TÉCNICO RS": [ "Adilson Domingues", "Nilton Cesar Alves" ].sort(),
+            "TÉCNICO SCS": [ "Marcelo" ]
+        };
+
+        const advisorsByRegion = {
+            "ASSESSOR SP": ["Mateus Ribeiro", "Márcia Pereira", "Lucas Ferreira", "Rayane Melo"],
+            "ASSESSOR RS": ["Renata Silveira"],
+            "ASSESSOR RP": ["Ricardo William"]
+        };
+
+        const techSelect = document.getElementById('t-responsible');
+        techSelect.innerHTML = '<option value="">Selecione...</option>';
+        for (const [region, names] of Object.entries(techsByRegion)) {
+            const group = document.createElement('optgroup'); group.label = region;
+            names.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.innerText = name; group.appendChild(opt); });
+            techSelect.appendChild(group);
+        }
+
+        const advSelect = document.getElementById('t-advisor');
+        advSelect.innerHTML = '<option value="">Selecione...</option>';
+        for (const [region, names] of Object.entries(advisorsByRegion)) {
+            const group = document.createElement('optgroup'); group.label = region;
+            names.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.innerText = name; group.appendChild(opt); });
+            advSelect.appendChild(group);
+        }
+
+        window.allowDrop = function(ev) { ev.preventDefault(); }
+        window.drag = function(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        window.drop = function(ev) {
+            ev.preventDefault();
+            const cardId = ev.dataTransfer.getData("text");
+            let target = ev.target;
+            while (target && !target.classList.contains('kanban-column')) { target = target.parentElement; }
+            if (target) {
+                const newStatus = target.id.replace('col-', '');
+                window.updateTechStatus(cardId, newStatus);
+            }
+        }
+
+        window.updateTechStatus = async function(cardId, newStatus) {
+            const idx = currentCardsData.findIndex(c => c.id === cardId);
+            if(idx > -1) {
+                currentCardsData[idx].technicalStatus = newStatus;
+                await updateDoc(boardRef, { cards: currentCardsData });
+            }
+        }
+
+        onSnapshot(boardRef, (docSnap) => {
+            if (docSnap.exists()) {
+                currentCardsData = docSnap.data().cards || [];
+                renderKanban(currentCardsData);
+                if(currentModalId) {
+                    const card = currentCardsData.find(c => c.id === currentModalId);
+                    if(card) renderTechComments(card.comments);
+                }
+            }
+        });
+
+        const escapeAttr = (str) => String(str).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+
+        window.openCardModal = function(id) {
+            const card = currentCardsData.find(c => c.id === id); if(!card) return; currentModalId = id;
+            document.getElementById('m-title').innerText = `${card.client} | ${card.machine} | ${card.serialsText || 'S/N N/A'}`;
+            document.getElementById('m-loc').innerText = card.locManut || '---';
+            document.getElementById('m-contrato').innerText = formatDate(card.dateContract);
+            document.getElementById('m-inicio').innerText = formatDate(card.dateStart);
+            document.getElementById('m-prev').innerText = formatDate(card.datePrevInst);
+            document.getElementById('m-golive').innerText = formatDate(card.dateGoLive);
+            
+            document.getElementById('t-start-date').value = card.techMaintenanceStart || '';
+            document.getElementById('t-release-date').value = card.techReleaseForecast || '';
+            document.getElementById('t-responsible').value = card.techResponsible || '';
+            document.getElementById('t-advisor').value = card.techAdvisor || ''; 
+            
+            document.getElementById('t-status').value = card.technicalStatus || 'DEMANDAS';
+
+            const checks = card.techChecklist || {};
+            document.getElementById('chk-nobreak').value = checks.nobreak || 'Pendente';
+            document.getElementById('chk-agua').value = checks.agua || 'Pendente';
+            document.getElementById('chk-pc').value = checks.pc || 'Pendente';
+            document.getElementById('chk-acess').value = checks.acess || 'Pendente';
+            renderTechComments(card.comments);
+            document.getElementById('techModal').style.display = 'flex';
+        }
+
+        function formatDate(dateStr) { if(!dateStr) return '---'; const [y, m, d] = dateStr.split('-'); return `${d}/${m}/${y}`; }
+
+        function renderTechComments(comments) {
+            const list = document.getElementById('t-comments-list'); list.innerHTML = ''; if(!comments) return;
+            comments.forEach((c) => {
+                let text = '', meta = '', time = '', id = '';
+                if(typeof c === 'string') { text = c; id = c; } 
+                else { text = c.text; id = c.id; time = c.time; meta = `[${c.stage}] (${c.module})`; }
+                const safeId = escapeAttr(id); 
+                const li = document.createElement('li'); li.className = 'comment-item';
+                li.innerHTML = `
+                    <div class="comment-header-row">
+                        <span class="comment-meta">${meta} <span style="font-size:0.8em;color:#888;">${time}</span></span>
+                        <div>
+                            <button onclick="window.editTechComment('${safeId}')" style="border:none;background:none;cursor:pointer;color:#005f87;margin-right:5px;">✎</button>
+                            <button onclick="window.deleteTechComment('${safeId}')" style="border:none;background:none;cursor:pointer;color:#dc3545;">❌</button>
+                        </div>
+                    </div>
+                    <div style="margin-top:4px;">${text}</div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        window.addTechComment = async function() {
+            const text = document.getElementById('t-comment-text').value; if(!text) return;
+            const idx = currentCardsData.findIndex(c => c.id === currentModalId);
+            if(idx > -1) {
+                if(editingCommentId) {
+                    const cIdx = currentCardsData[idx].comments.findIndex(c => (typeof c === 'object' ? c.id : c) === editingCommentId);
+                    if(cIdx > -1) {
+                        currentCardsData[idx].comments[cIdx].text = text;
+                        currentCardsData[idx].comments[cIdx].time = new Date().toLocaleString('pt-BR') + ' (Editado)';
+                    }
+                    editingCommentId = null;
+                } else {
+                    if(!currentCardsData[idx].comments) currentCardsData[idx].comments = [];
+                    currentCardsData[idx].comments.push({ id: 'tc-' + Date.now(), text: text, stage: 'OFICINA', module: 'TÉCNICO', time: new Date().toLocaleString('pt-BR') });
+                }
+                document.getElementById('t-comment-text').value = '';
+                renderTechComments(currentCardsData[idx].comments);
+                await updateDoc(boardRef, { cards: currentCardsData });
+            }
+        }
+
+        window.editTechComment = function(commentId) {
+            const card = currentCardsData.find(c => c.id === currentModalId);
+            const comment = card.comments.find(c => (typeof c === 'object' ? c.id : c) === commentId);
+            if(comment) { 
+                document.getElementById('t-comment-text').value = typeof comment === 'string' ? comment : comment.text; 
+                editingCommentId = commentId; 
+                document.getElementById('t-comment-text').focus(); 
+            }
+        }
+
+        window.deleteTechComment = async function(commentId) {
+            const idx = currentCardsData.findIndex(c => c.id === currentModalId);
+            if(idx > -1 && confirm('Excluir comentário?')) {
+                currentCardsData[idx].comments = currentCardsData[idx].comments.filter(c => {
+                    if(typeof c === 'string') return c !== commentId;
+                    return c.id !== commentId;
+                });
+                renderTechComments(currentCardsData[idx].comments);
+                await updateDoc(boardRef, { cards: currentCardsData });
+            }
+        }
+
+        window.saveTechData = async function() {
+            if(!currentModalId) return;
+            const idx = currentCardsData.findIndex(c => c.id === currentModalId);
+            if(idx > -1) {
+                currentCardsData[idx].technicalStatus = document.getElementById('t-status').value;
+                currentCardsData[idx].techMaintenanceStart = document.getElementById('t-start-date').value;
+                currentCardsData[idx].techReleaseForecast = document.getElementById('t-release-date').value;
+                currentCardsData[idx].techResponsible = document.getElementById('t-responsible').value;
+                currentCardsData[idx].techAdvisor = document.getElementById('t-advisor').value; 
+                
+                currentCardsData[idx].techChecklist = {
+                    nobreak: document.getElementById('chk-nobreak').value,
+                    agua: document.getElementById('chk-agua').value,
+                    pc: document.getElementById('chk-pc').value,
+                    acess: document.getElementById('chk-acess').value
+                };
+                await updateDoc(boardRef, { cards: currentCardsData });
+                window.closeModal();
+            }
+        }
+
+        window.closeModal = function() { document.getElementById('techModal').style.display = 'none'; currentModalId = null; editingCommentId = null; }
+
+        function renderKanban(cards) {
+            cards.sort((a, b) => {
+                if (a.isUrgent && !b.isUrgent) return -1;
+                if (!a.isUrgent && b.isUrgent) return 1;
+                const d1 = new Date(a.dateContract || '9999-12-31'); 
+                const d2 = new Date(b.dateContract || '9999-12-31'); 
+                return d1 - d2;
+            });
+
+            const cols = ['DEMANDAS', 'REPARO', 'VAL_TEC', 'VAL_CIEN', 'VISTORIA', 'EMBALAGEM', 'PRONTO'];
+            const counts = {}; cols.forEach(c => { document.querySelector(`#col-${c} .card-list`).innerHTML = ''; counts[c] = 0; });
+
+            cards.forEach(card => {
+                if(card.isDeleted) return; 
+                const status = card.technicalStatus || 'DEMANDAS';
+                
+                if (cols.includes(status)) {
+                    const el = document.createElement('div');
+                    el.className = 'tech-card';
+                    el.id = card.id;
+                    el.draggable = true;
+                    el.ondragstart = window.drag;
+                    el.onclick = () => openCardModal(card.id);
+
+                    const urgentBadge = card.isUrgent ? `<span class="badge badge-urgent">URGENTE</span>` : '';
+                    const consultantBadge = card.consultant ? `<span class="badge badge-consultant">${card.consultant}</span>` : '';
+                    const techLabel = techStatusMap[status] || techStatusMap['DEMANDAS'];
+                    const techBadgeHTML = `<div class="tech-status-label" style="color:${techLabel.color}; border-color:${techLabel.color}; margin-bottom:5px;">[OFICINA: ${techLabel.label}]</div>`;
+
+                    el.innerHTML = `
+                        <span class="t-client">${card.client}</span>
+                        <div class="badges-container">
+                            ${urgentBadge}
+                            ${consultantBadge}
+                            <span class="badge badge-contract">${card.contract || '---'}</span>
+                        </div>
+                        <span class="t-city">${card.city || ''}</span>
+                        <span class="t-machine">${card.machine}</span>
+                        <span class="t-sn-badge">${card.serialsText || 'S/N N/A'}</span>
+                        ${techBadgeHTML}
+                    `;
+                    document.querySelector(`#col-${status} .card-list`).appendChild(el);
+                    counts[status]++;
+                }
+            });
+            cols.forEach(c => document.getElementById(`count-${c}`).innerText = counts[c]);
+        }
+    </script>
+</body>
+</html>

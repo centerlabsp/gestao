@@ -1,0 +1,90 @@
+:root { 
+    --bg-color: #f4f5f7; 
+    --primary: #005f87; 
+    --red: #dc3545;
+    --blue: #007bff;
+    --green: #28a745;
+}
+
+body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); margin: 0; padding: 10px; font-size: 12px; }
+
+/* Centralização do Status */
+#status-indicator { text-align: center; font-weight: bold; color: #666; margin: 15px 0; width: 100%; display: block; }
+
+/* Header e Nav */
+.header-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+.header-logo { max-height: 45px; }
+.header-nav { display: flex; gap: 10px; }
+.nav-btn, .archive-btn-view { background-color: var(--primary); color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; }
+
+/* Painel de Controle (Grid) */
+.control-panel { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
+.header-grid, .dates-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+    gap: 10px; 
+    margin-bottom: 10px; 
+}
+input, select { padding: 4px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; height: 30px; }
+label { font-weight: 700; font-size: 0.85em; margin-bottom: 3px; display: block; }
+.add-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+/* Barra de Filtros e Etiquetas */
+.filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; background: #fff; padding: 10px; border-radius: 5px; }
+.filter-input { flex: 1; }
+.region-tags-filter { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; }
+.tag-btn { background: white; border: 1px solid #ddd; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; cursor: pointer; color: #555; }
+.tag-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* --- KANBAN (ESSENCIAL PARA AS COLUNAS) --- */
+.kanban-container { 
+    display: flex; 
+    gap: 15px; 
+    overflow-x: auto; 
+    padding-bottom: 20px; 
+    align-items: flex-start;
+}
+.kanban-column { 
+    flex: 1; 
+    min-width: 320px; 
+    background: #e2e4e6; 
+    border-radius: 8px; 
+    min-height: 80vh; 
+}
+.column-header { padding: 12px; color: white; font-weight: 900; text-align: center; border-radius: 8px 8px 0 0; }
+.status-red { background: var(--red); }
+.status-blue { background: var(--blue); }
+.status-green { background: var(--green); }
+.card-list { padding: 10px; min-height: 100px; }
+
+/* --- CARD OTIMIZADO --- */
+.card { background: white; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 5px; position: relative; }
+.card-status-header { display: flex; gap: 4px; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 5px; }
+.st-tag { flex: 1; font-size: 9px; font-weight: bold; padding: 3px 0; text-align: center; border-radius: 3px; background: #eee; color: #999; cursor: pointer; }
+.active-ni { background: var(--red) !important; color: white !important; }
+.active-and { background: var(--blue) !important; color: white !important; }
+.active-con { background: var(--green) !important; color: white !important; }
+.edit-pencil { border: none; background: none; cursor: pointer; font-size: 14px; color: var(--primary); }
+
+.card-client { font-weight: 900; text-transform: uppercase; font-size: 1.1em; color: #000; }
+.card-info-row { font-size: 0.9em; background: #f8f9fa; padding: 4px; border-radius: 4px; }
+
+/* Badges em Ordem (Região Primeiro) */
+.badge-group { display: flex; flex-wrap: wrap; gap: 3px; }
+.mini-badge { padding: 2px 5px; border-radius: 3px; font-size: 9px; font-weight: bold; color: white; }
+.bg-region { background: #555; }
+.bg-type { background: var(--primary); }
+.bg-os { background: #000; }
+
+.card-dates-row { display: flex; gap: 8px; }
+.date-item { flex: 1; }
+.date-item label { font-size: 8px; font-weight: bold; margin: 0; }
+.date-item input { height: 22px; font-size: 10px; }
+
+.tech-row-compact { display: flex; gap: 5px; align-items: center; margin-top: 5px; }
+.tech-row-compact select { height: 26px; font-size: 10px; }
+.btn-wa-compact { background: #25d366; color: white; border: none; border-radius: 4px; width: 26px; height: 26px; cursor: pointer; }
+
+/* Modal */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
+.modal-box { background: white; padding: 20px; border-radius: 8px; width: 380px; }
