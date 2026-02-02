@@ -13,37 +13,69 @@
         :root { --bg-color: #ffffff; --column-bg: #f4f5f7; --card-bg: #ffffff; --text-color: #172b4d; --header-bg: #005f87; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; overflow-x: auto; height: 100vh; display: flex; flex-direction: column; }
         
+        /* HEADER FLEXBOX - CENTRALIZAÇÃO ABSOLUTA */
         .tech-header { 
             display: flex; 
             align-items: center; 
-            justify-content: center; 
-            position: relative;
+            justify-content: space-between;
             background-color: var(--header-bg); 
             padding: 10px 20px; 
             color: white; 
             flex-shrink: 0; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            position: relative; 
+            height: 50px;
         }
         
-        .header-content { display: flex; align-items: center; gap: 15px; }
+        .header-left { display: flex; align-items: center; z-index: 10; }
+        .header-right { display: flex; align-items: center; gap: 8px; z-index: 10; }
+
+        /* Container Centralizado */
+        .header-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
         .tech-logo { height: 40px; background: white; padding: 5px; border-radius: 5px; }
         h1 { margin: 0; font-size: 1.4em; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; }
 
+        /* BOTÕES DE NAVEGAÇÃO */
         .tech-nav-btn { 
-            position: absolute;
-            right: 20px;
             background-color: #ffffff; 
             color: #005f87; 
-            padding: 8px 15px; 
+            padding: 5px 10px; 
             text-decoration: none; 
-            border-radius: 5px; 
-            font-weight: 800; 
-            font-size: 0.9em; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+            border-radius: 4px; 
+            font-weight: 700; 
+            font-size: 0.8em; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
             transition: 0.2s;
             white-space: nowrap; 
+            cursor: pointer;
+            border: none;
+            display: flex; align-items: center; gap: 4px;
         }
         .tech-nav-btn:hover { background-color: #e9ecef; }
+
+        .btn-archive-mini {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: 0.2s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .btn-archive-mini:hover { background: rgba(255,255,255,0.3); }
 
         .kanban-board { display: flex; gap: 10px; align-items: flex-start; padding: 15px; height: 100%; overflow-x: auto; }
         
@@ -75,7 +107,17 @@
         .tech-card:active { cursor: grabbing; }
         .tech-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
 
-        .t-client { font-weight: 800; font-size: 1.1em; color: #333; margin-bottom: 2px; display: block; }
+        .late-card { border: 4px solid #dc3545 !important; }
+
+        .card-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; gap: 5px; }
+        .t-client { font-weight: 800; font-size: 1.1em; color: #333; display: block; flex: 1; line-height: 1.2; }
+        
+        .date-badge { font-size: 0.85em; font-weight: 800; padding: 2px 6px; border-radius: 4px; color: #fff; white-space: nowrap; flex-shrink: 0; height: fit-content; }
+        .date-yellow { background-color: #ffc107; color: #000; }
+        .date-red { background-color: #dc3545; }
+        .date-green { background-color: #198754; }
+        .date-gray { background-color: #e2e6ea; color: #555; border: 1px solid #ccc; }
+
         .t-city { font-size: 0.85em; color: #666; font-style: italic; display: block; margin-bottom: 5px;}
         .t-machine { font-size: 0.95em; color: #005f87; font-weight: 700; display: block; margin-bottom: 2px; }
         .t-sn-badge { background-color: #e9ecef; color: #333; border: 1px solid #ccc; border-radius: 3px; padding: 2px 6px; font-size: 0.85em; font-weight: 600; display: inline-block; margin-top: 2px;}
@@ -85,8 +127,32 @@
         .badge-contract { background-color: #28a745; }
         .badge-consultant { background-color: #6c757d; }
         .badge-urgent { background-color: #dc3545; animation: pulse 2s infinite; }
-        
-        .tech-status-label { display: inline-block; margin-top: 5px; padding: 2px 6px; border-radius: 4px; font-size: 0.75em; font-weight: 800; text-transform: uppercase; border: 1px solid transparent; }
+
+        /* NOVA ETIQUETA DO TÉCNICO */
+        .tech-resp-badge {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            border: 1px solid #bbdefb;
+            border-radius: 4px;
+            padding: 2px 5px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-top: 4px;
+            display: block; /* Pula linha */
+            width: fit-content;
+        }
+
+        .tech-status-label { 
+            display: block; 
+            margin-top: 5px; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-size: 0.75em; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            border: 1px solid transparent; 
+            width: fit-content;
+        }
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
 
@@ -98,43 +164,21 @@
         .col-embalagem .tech-card { border-left-color: #6f42c1; }
         .col-pronto .tech-card { border-left-color: #198754; }
 
-        /* --- MODAL OTIMIZADO (Menor) --- */
+        /* --- MODAL --- */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: flex-start; overflow-y: auto; padding-top: 30px; }
-        
-        .modal-box { 
-            background: white; 
-            width: 90%; 
-            max-width: 600px; /* Reduzido de 750px */
-            padding: 20px;    /* Reduzido de 25px */
-            border-radius: 8px; 
-            box-shadow: 0 5px 25px rgba(0,0,0,0.3); 
-            margin-bottom: 50px; 
-            position: relative; 
-            font-size: 12px;  /* Fonte base levemente menor */
-        }
-        
+        .modal-box { background: white; width: 90%; max-width: 600px; padding: 20px; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.3); margin-bottom: 50px; position: relative; font-size: 12px; }
         .modal-close { position: absolute; top: 10px; right: 15px; font-size: 1.5em; cursor: pointer; color: #666; font-weight: bold;}
         .modal-title { font-size: 1.3em; font-weight: 900; color: #005f87; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 5px; padding-right: 20px;}
         
-        /* Grid de Info Compacto */
-        .info-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
-            margin-bottom: 15px; background: #f0f4f8; 
-            padding: 10px; border-radius: 6px; 
-        }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; background: #f0f4f8; padding: 10px; border-radius: 6px; }
         .info-item label { display: block; font-size: 0.8em; color: #555; font-weight: bold; text-transform: uppercase; margin-bottom: 1px;}
         .info-item span { font-size: 0.95em; font-weight: 600; color: #333; }
         
-        .tech-form-group { margin-bottom: 10px; } /* Margem reduzida */
+        .tech-form-group { margin-bottom: 10px; } 
         .tech-form-group label { display: block; font-size: 0.85em; font-weight: bold; margin-bottom: 3px; color: #333;}
         .tech-select, .tech-input { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1em;}
 
-        /* Grid de Checklist Compacto */
-        .items-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; 
-            margin-bottom: 15px; border: 1px solid #eee; 
-            padding: 10px; border-radius: 6px; background: #fafafa;
-        }
+        .items-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; border: 1px solid #eee; padding: 10px; border-radius: 6px; background: #fafafa;}
         .check-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; font-weight: 600; color: #444;}
         .check-item select { width: 90px; padding: 2px; font-size: 0.9em; border-radius: 4px; border: 1px solid #ccc;}
 
@@ -144,33 +188,72 @@
         .comment-header-row { display: flex; justify-content: space-between; align-items: center; }
         .comment-meta { font-size: 0.85em; font-weight: bold; color: #005f87; }
         
-        .save-btn { 
-            background: #28a745; color: white; border: none; 
-            padding: 10px 20px; width: 100%; border-radius: 5px; 
-            font-weight: bold; cursor: pointer; margin-top: 10px; 
-            font-size: 1.1em; transition: 0.2s;
-        }
+        .save-btn { background: #28a745; color: white; border: none; padding: 10px 20px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1em; transition: 0.2s; }
         .save-btn:hover { background: #218838; }
+
+        .btn-archive-card { background: #6c757d; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1em; display: none; }
+        .btn-archive-card:hover { background: #5a6268; }
+
+        /* Estatísticas */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; } 
+        .stat-box { background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; border-radius: 6px; text-align: center; }
+        .stat-number { font-size: 2em; font-weight: 900; color: #005f87; display: block; }
+        .stat-label { font-size: 0.9em; color: #666; font-weight: bold; text-transform: uppercase; }
         
-        #t-status-group { background-color: #eef6fc; padding: 8px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #b6d4fe; }
-        
-        optgroup { color: #005f87; font-weight: bold; font-style: normal; background: #eef6fc; }
-        option { color: #333; padding: 5px; background: #fff; }
+        /* FLUXOGRAMA */
+        .flow-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; row-gap: 25px; }
+        .flow-step { 
+            background: #eef6fc; color: #005f87; border: 1px solid #b6d4fe; 
+            padding: 10px 15px; border-radius: 25px; font-size: 0.9em; font-weight: bold;
+            display: flex; align-items: center; position: relative;
+        }
+        .flow-step span { font-size: 1.3em; font-weight: 900; margin-left: 8px; color: #333; }
+        .flow-step:not(:last-child)::after {
+            content: "→";
+            position: absolute;
+            right: -28px;
+            color: #ccc;
+            font-size: 2em;
+            top: 50%;
+            transform: translateY(-56%);
+        }
+        .flow-step:not(:last-child) { margin-right: 30px; } 
+        .flow-step.final-step { background-color: #d1e7dd; border-color: #badbcc; color: #0f5132; }
+        .flow-step.step-delayed { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .flow-step.step-delayed span { color: #721c24; }
+
+        /* Arquivo */
+        .archive-list { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; }
+        .archive-item { background: #fff; border: 1px solid #eee; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .archive-actions button { margin-left: 5px; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: none; font-weight: bold; font-size: 0.8em; }
+        .btn-restore { background: #ffc107; color: #000; }
+        .btn-delete { background: #dc3545; color: #fff; }
 
         @media (max-width: 900px) {
-            .tech-header { flex-direction: column; gap: 10px; }
-            .tech-nav-btn { position: static; display: block; width: 100%; text-align: center; }
+            .tech-header { height: auto; flex-direction: column; gap: 10px; padding-bottom: 15px;}
+            .header-center { position: static; transform: none; margin: 5px 0; }
+            .header-right { width: 100%; justify-content: center; }
+            .tech-nav-btn { flex: 1; justify-content: center; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
     <div class="tech-header">
-        <div class="header-content">
+        <div class="header-left">
+            <button onclick="window.openArchive()" class="btn-archive-mini" title="Ver Arquivos">📂</button>
+        </div>
+        
+        <div class="header-center">
             <img src="icone.png" alt="Logo" class="tech-logo">
             <h1>GESTÃO TÉCNICA - LIBERAÇÃO DE EQUIPAMENTOS</h1>
         </div>
-        <a href="painel.html" class="tech-nav-btn">⚙️ Painel Técnico</a>
+
+        <div class="header-right">
+            <button onclick="window.openStats()" class="tech-nav-btn">📊 Estatísticas</button>
+            <a href="painel.html" class="tech-nav-btn">⚙️ Painel Técnico</a>
+        </div>
     </div>
 
     <div class="kanban-board">
@@ -180,7 +263,10 @@
         <div class="kanban-column col-val-cien" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-VAL_CIEN"><div class="column-header">Validação Científica <span class="card-count" id="count-VAL_CIEN">0</span></div><div class="card-list"></div></div>
         <div class="kanban-column col-vistoria" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-VISTORIA"><div class="column-header">Vistoria Final <span class="card-count" id="count-VISTORIA">0</span></div><div class="card-list"></div></div>
         <div class="kanban-column col-embalagem" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-EMBALAGEM"><div class="column-header">Embalagem <span class="card-count" id="count-EMBALAGEM">0</span></div><div class="card-list"></div></div>
-        <div class="kanban-column col-pronto" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-PRONTO"><div class="column-header">Pronto <span class="card-count" id="count-PRONTO">0</span></div><div class="card-list"></div></div>
+        <div class="kanban-column col-pronto" ondrop="drop(event)" ondragover="allowDrop(event)" id="col-PRONTO">
+            <div class="column-header">Liberado <span class="card-count" id="count-PRONTO">0</span></div>
+            <div class="card-list"></div>
+        </div>
     </div>
 
     <div class="modal-overlay" id="techModal">
@@ -205,7 +291,7 @@
                     <option value="VAL_CIEN">VALIDAÇÃO CIENTÍFICA</option>
                     <option value="VISTORIA">VISTORIA FINAL</option>
                     <option value="EMBALAGEM">EMBALAGEM</option>
-                    <option value="PRONTO">PRONTO</option>
+                    <option value="PRONTO">LIBERADO</option>
                 </select>
             </div>
 
@@ -237,6 +323,7 @@
                 <div class="check-item"><span>Estação de Água</span> <select id="chk-agua"><option value="Pendente">Pendente</option><option value="Conferido">Conferido</option><option value="N/A">N/A</option></select></div>
                 <div class="check-item"><span>Computador Completo</span> <select id="chk-pc"><option value="Pendente">Pendente</option><option value="Conferido">Conferido</option><option value="N/A">N/A</option></select></div>
                 <div class="check-item"><span>Acessórios Equip.</span> <select id="chk-acess"><option value="Pendente">Pendente</option><option value="Conferido">Conferido</option><option value="N/A">N/A</option></select></div>
+                <div class="check-item"><span>Check-list Equip.</span> <select id="chk-checklist"><option value="Pendente">Pendente</option><option value="Conferido">Conferido</option><option value="N/A">N/A</option></select></div>
             </div>
 
             <label style="font-weight:bold; display:block; margin-bottom:5px; color:#333;">Comentários (Gestão e Técnica):</label>
@@ -247,6 +334,49 @@
             <ul class="comment-list" id="t-comments-list"></ul>
 
             <button class="save-btn" onclick="window.saveTechData()">SALVAR E FECHAR</button>
+            <button class="btn-archive-card" id="btn-archive-individual" onclick="window.archiveCurrentCard()">🗄️ ARQUIVAR ESTE ITEM</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="statsModal">
+        <div class="modal-box" style="max-width:800px;">
+            <span class="modal-close" onclick="window.closeStats()">×</span>
+            <div class="modal-title">Estatísticas do Processo</div>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number" id="st-total">0</span>
+                    <span class="stat-label">Total Geral</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number" style="color:#28a745;" id="st-dia">0</span>
+                    <span class="stat-label">Em Dia</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number" style="color:#dc3545;" id="st-atraso">0</span>
+                    <span class="stat-label">Atrasados</span>
+                </div>
+                 <div class="stat-box">
+                    <span class="stat-number" style="color:#6f42c1;" id="st-liberados">0</span>
+                    <span class="stat-label">Liberados</span>
+                </div>
+                 <div class="stat-box">
+                    <span class="stat-number" style="color:#6c757d;" id="st-arquivados">0</span>
+                    <span class="stat-label">Arquivados</span>
+                </div>
+            </div>
+            
+            <h4 style="margin-bottom:15px; color:#333; text-align:center;">Fluxo do Processo:</h4>
+            <div id="stats-phases" class="flow-container"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="archiveModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="window.closeArchive()">×</span>
+            <div class="modal-title">Arquivo de Liberados</div>
+            <p style="color:#666; margin-bottom:10px;">Lista de equipamentos que foram concluídos e arquivados.</p>
+            <ul class="archive-list" id="archive-list"></ul>
         </div>
     </div>
 
@@ -279,8 +409,10 @@
             'VAL_CIEN': { label: 'VAL. CIENTÍFICA', color: '#0dcaf0' },
             'VISTORIA': { label: 'VISTORIA FINAL', color: '#0d6efd' },
             'EMBALAGEM': { label: 'EMBALAGEM', color: '#6f42c1' },
-            'PRONTO': { label: 'PRONTO', color: '#198754' }
+            'PRONTO': { label: 'LIBERADO', color: '#198754' }
         };
+
+        const statusOrder = ['DEMANDAS', 'REPARO', 'VAL_TEC', 'VAL_CIEN', 'VISTORIA', 'EMBALAGEM', 'PRONTO'];
 
         const techsByRegion = {
             "TÉCNICO SP": [ "Daniel Ourique", "Daniel Serrano", "Eduardo Rafael", "Fabio Mazine", "Guilherme Yoshida", "Matheus Pereira", "Oseias Barbosa", "Rafael Rodrigues", "Robson Miranda", "Rubens Emerson", "Vanleno Câmara", "Wesley Monteiro" ].sort(),
@@ -327,9 +459,25 @@
         window.updateTechStatus = async function(cardId, newStatus) {
             const idx = currentCardsData.findIndex(c => c.id === cardId);
             if(idx > -1) {
-                currentCardsData[idx].technicalStatus = newStatus;
+                const card = currentCardsData[idx];
+                const oldStatus = card.technicalStatus;
+                card.technicalStatus = newStatus;
+                
                 await updateDoc(boardRef, { cards: currentCardsData });
+
+                if(newStatus === 'PRONTO' && oldStatus !== 'PRONTO') {
+                    if(confirm("Equipamento LIBERADO! Deseja enviar mensagem para o Administrativo agora?")) {
+                        sendWhatsapp(card);
+                    }
+                }
             }
+        }
+
+        function sendWhatsapp(card) {
+            const phone = "5511988133963";
+            const msg = `Olá, o equipamento do cliente *${card.client.trim()}* foi LIBERADO pelo setor técnico.\n\n*Modelo:* ${card.machine}\n*S/N:* ${card.serialsText || 'N/A'}`;
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
         }
 
         onSnapshot(boardRef, (docSnap) => {
@@ -359,13 +507,23 @@
             document.getElementById('t-responsible').value = card.techResponsible || '';
             document.getElementById('t-advisor').value = card.techAdvisor || ''; 
             
-            document.getElementById('t-status').value = card.technicalStatus || 'DEMANDAS';
+            const status = card.technicalStatus || 'DEMANDAS';
+            document.getElementById('t-status').value = status;
+
+            const archiveBtn = document.getElementById('btn-archive-individual');
+            if (status === 'PRONTO') {
+                archiveBtn.style.display = 'block';
+            } else {
+                archiveBtn.style.display = 'none';
+            }
 
             const checks = card.techChecklist || {};
             document.getElementById('chk-nobreak').value = checks.nobreak || 'Pendente';
             document.getElementById('chk-agua').value = checks.agua || 'Pendente';
             document.getElementById('chk-pc').value = checks.pc || 'Pendente';
             document.getElementById('chk-acess').value = checks.acess || 'Pendente';
+            document.getElementById('chk-checklist').value = checks.checklist || 'Pendente'; 
+
             renderTechComments(card.comments);
             document.getElementById('techModal').style.display = 'flex';
         }
@@ -407,7 +565,7 @@
                     editingCommentId = null;
                 } else {
                     if(!currentCardsData[idx].comments) currentCardsData[idx].comments = [];
-                    currentCardsData[idx].comments.push({ id: 'tc-' + Date.now(), text: text, stage: 'OFICINA', module: 'TÉCNICO', time: new Date().toLocaleString('pt-BR') });
+                    currentCardsData[idx].comments.push({ id: 'tc-' + Date.now(), text: text, stage: 'ASSISTÊNCIA TÉCNICA', module: 'TÉCNICO', time: new Date().toLocaleString('pt-BR') });
                 }
                 document.getElementById('t-comment-text').value = '';
                 renderTechComments(currentCardsData[idx].comments);
@@ -441,20 +599,32 @@
             if(!currentModalId) return;
             const idx = currentCardsData.findIndex(c => c.id === currentModalId);
             if(idx > -1) {
-                currentCardsData[idx].technicalStatus = document.getElementById('t-status').value;
-                currentCardsData[idx].techMaintenanceStart = document.getElementById('t-start-date').value;
-                currentCardsData[idx].techReleaseForecast = document.getElementById('t-release-date').value;
-                currentCardsData[idx].techResponsible = document.getElementById('t-responsible').value;
-                currentCardsData[idx].techAdvisor = document.getElementById('t-advisor').value; 
+                const card = currentCardsData[idx];
+                const oldStatus = card.technicalStatus;
+                const newStatus = document.getElementById('t-status').value;
+
+                card.technicalStatus = newStatus;
+                card.techMaintenanceStart = document.getElementById('t-start-date').value;
+                card.techReleaseForecast = document.getElementById('t-release-date').value;
+                card.techResponsible = document.getElementById('t-responsible').value;
+                card.techAdvisor = document.getElementById('t-advisor').value; 
                 
-                currentCardsData[idx].techChecklist = {
+                card.techChecklist = {
                     nobreak: document.getElementById('chk-nobreak').value,
                     agua: document.getElementById('chk-agua').value,
                     pc: document.getElementById('chk-pc').value,
-                    acess: document.getElementById('chk-acess').value
+                    acess: document.getElementById('chk-acess').value,
+                    checklist: document.getElementById('chk-checklist').value
                 };
+                
                 await updateDoc(boardRef, { cards: currentCardsData });
                 window.closeModal();
+
+                if(newStatus === 'PRONTO' && oldStatus !== 'PRONTO') {
+                    if(confirm("Equipamento LIBERADO! Deseja enviar mensagem para o Administrativo agora?")) {
+                        sendWhatsapp(card);
+                    }
+                }
             }
         }
 
@@ -472,10 +642,15 @@
             const cols = ['DEMANDAS', 'REPARO', 'VAL_TEC', 'VAL_CIEN', 'VISTORIA', 'EMBALAGEM', 'PRONTO'];
             const counts = {}; cols.forEach(c => { document.querySelector(`#col-${c} .card-list`).innerHTML = ''; counts[c] = 0; });
 
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
             cards.forEach(card => {
                 if(card.isDeleted) return; 
                 const status = card.technicalStatus || 'DEMANDAS';
                 
+                if (status === 'ARCHIVED') return;
+
                 if (cols.includes(status)) {
                     const el = document.createElement('div');
                     el.className = 'tech-card';
@@ -484,13 +659,43 @@
                     el.ondragstart = window.drag;
                     el.onclick = () => openCardModal(card.id);
 
+                    let dateClass = 'date-gray';
+                    let dateText = 'S/D';
+                    let isLate = false;
+
+                    if (card.techReleaseForecast) {
+                        const parts = card.techReleaseForecast.split('-');
+                        dateText = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                        const releaseDate = new Date(card.techReleaseForecast + 'T00:00:00');
+
+                        if (status === 'PRONTO') {
+                            dateClass = 'date-green';
+                        } else {
+                            if (releaseDate < today) {
+                                isLate = true;
+                                dateClass = 'date-red';
+                            } else {
+                                dateClass = 'date-yellow';
+                            }
+                        }
+                    } else {
+                        if (status === 'PRONTO') { dateClass = 'date-green'; dateText = 'LIBERADO'; }
+                    }
+
+                    if (isLate) el.classList.add('late-card');
+
                     const urgentBadge = card.isUrgent ? `<span class="badge badge-urgent">URGENTE</span>` : '';
                     const consultantBadge = card.consultant ? `<span class="badge badge-consultant">${card.consultant}</span>` : '';
                     const techLabel = techStatusMap[status] || techStatusMap['DEMANDAS'];
-                    const techBadgeHTML = `<div class="tech-status-label" style="color:${techLabel.color}; border-color:${techLabel.color}; margin-bottom:5px;">[OFICINA: ${techLabel.label}]</div>`;
+                    const techBadgeHTML = `<div class="tech-status-label" style="color:${techLabel.color}; border-color:${techLabel.color}; margin-bottom:5px;">[Assistência Técnica: ${techLabel.label}]</div>`;
+                    
+                    const techRespHTML = card.techResponsible ? `<div class="tech-resp-badge">👤 ${card.techResponsible}</div>` : '';
 
                     el.innerHTML = `
-                        <span class="t-client">${card.client}</span>
+                        <div class="card-header-row">
+                            <span class="t-client">${card.client}</span>
+                            <span class="date-badge ${dateClass}">${dateText}</span>
+                        </div>
                         <div class="badges-container">
                             ${urgentBadge}
                             ${consultantBadge}
@@ -499,6 +704,7 @@
                         <span class="t-city">${card.city || ''}</span>
                         <span class="t-machine">${card.machine}</span>
                         <span class="t-sn-badge">${card.serialsText || 'S/N N/A'}</span>
+                        ${techRespHTML}
                         ${techBadgeHTML}
                     `;
                     document.querySelector(`#col-${status} .card-list`).appendChild(el);
@@ -506,6 +712,135 @@
                 }
             });
             cols.forEach(c => document.getElementById(`count-${c}`).innerText = counts[c]);
+        }
+
+        window.openStats = function() {
+            let total = 0, emDia = 0, atrasados = 0, liberados = 0, arquivados = 0;
+            const phases = { 'DEMANDAS':0, 'REPARO':0, 'VAL_TEC':0, 'VAL_CIEN':0, 'VISTORIA':0, 'EMBALAGEM':0, 'PRONTO':0 };
+            
+            // Objeto para rastrear se uma fase tem atraso
+            const phasesHasDelay = { 'DEMANDAS':false, 'REPARO':false, 'VAL_TEC':false, 'VAL_CIEN':false, 'VISTORIA':false, 'EMBALAGEM':false, 'PRONTO':false };
+
+            const today = new Date(); today.setHours(0,0,0,0);
+
+            currentCardsData.forEach(c => {
+                if(c.isDeleted) return;
+
+                // Contagem de Arquivados
+                if(c.technicalStatus === 'ARCHIVED') {
+                    arquivados++;
+                    return; 
+                }
+
+                total++;
+                const status = c.technicalStatus || 'DEMANDAS';
+                
+                if(phases[status] !== undefined) phases[status]++;
+
+                if(status === 'PRONTO') {
+                    liberados++;
+                    emDia++; 
+                } else {
+                    let isLate = false;
+                    if(c.techReleaseForecast) {
+                        const rDate = new Date(c.techReleaseForecast + 'T00:00:00');
+                        if(rDate < today) isLate = true;
+                    }
+
+                    if(isLate) {
+                        atrasados++;
+                        phasesHasDelay[status] = true; 
+                    } else {
+                        emDia++; 
+                    }
+                }
+            });
+
+            document.getElementById('st-total').innerText = total;
+            document.getElementById('st-dia').innerText = emDia;
+            document.getElementById('st-atraso').innerText = atrasados;
+            document.getElementById('st-liberados').innerText = liberados;
+            document.getElementById('st-arquivados').innerText = arquivados;
+
+            const phDiv = document.getElementById('stats-phases');
+            phDiv.innerHTML = '';
+            
+            statusOrder.forEach(key => {
+                const count = phases[key];
+                const label = key === 'PRONTO' ? 'LIBERADO' : techStatusMap[key].label;
+                const isFinal = key === 'PRONTO';
+                const finalClass = isFinal ? 'final-step' : '';
+                
+                // Verifica se a fase tem atraso para adicionar classe vermelha
+                const delayedClass = phasesHasDelay[key] ? 'step-delayed' : '';
+                
+                phDiv.innerHTML += `
+                    <div class="flow-step ${finalClass} ${delayedClass}">
+                        ${label}: <span>${count}</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('statsModal').style.display = 'flex';
+        }
+        window.closeStats = function() { document.getElementById('statsModal').style.display = 'none'; }
+
+        window.archiveCurrentCard = async function() {
+            if(!currentModalId) return;
+            if(!confirm('Deseja arquivar este equipamento? Ele sairá do quadro principal.')) return;
+            const idx = currentCardsData.findIndex(c => c.id === currentModalId);
+            if(idx > -1) {
+                currentCardsData[idx].technicalStatus = 'ARCHIVED';
+                await updateDoc(boardRef, { cards: currentCardsData });
+                window.closeModal();
+            }
+        }
+
+        window.openArchive = function() {
+            const list = document.getElementById('archive-list');
+            list.innerHTML = '';
+            const archived = currentCardsData.filter(c => c.technicalStatus === 'ARCHIVED' && !c.isDeleted);
+            if(archived.length === 0) {
+                list.innerHTML = '<li style="padding:10px; color:#666;">Nenhum item arquivado.</li>';
+            } else {
+                archived.forEach(c => {
+                    const li = document.createElement('li');
+                    li.className = 'archive-item';
+                    li.innerHTML = `
+                        <div>
+                            <strong>${c.client}</strong> - ${c.machine}<br>
+                            <span style="font-size:0.85em; color:#666;">Contrato: ${c.contract || '---'} | S/N: ${c.serialsText || ''}</span>
+                        </div>
+                        <div class="archive-actions">
+                            <button class="btn-restore" onclick="window.restoreCard('${c.id}')">Restaurar</button>
+                            <button class="btn-delete" onclick="window.deleteCardPermanent('${c.id}')">Excluir</button>
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
+            }
+            document.getElementById('archiveModal').style.display = 'flex';
+        }
+        window.closeArchive = function() { document.getElementById('archiveModal').style.display = 'none'; }
+
+        window.restoreCard = async function(id) {
+            if(!confirm('Restaurar este item para LIBERADO?')) return;
+            const idx = currentCardsData.findIndex(c => c.id === id);
+            if(idx > -1) {
+                currentCardsData[idx].technicalStatus = 'PRONTO';
+                await updateDoc(boardRef, { cards: currentCardsData });
+                window.openArchive(); 
+            }
+        }
+
+        window.deleteCardPermanent = async function(id) {
+            if(!confirm('ATENÇÃO: Isso excluirá o card PERMANENTEMENTE. Continuar?')) return;
+            const idx = currentCardsData.findIndex(c => c.id === id);
+            if(idx > -1) {
+                currentCardsData[idx].isDeleted = true; 
+                await updateDoc(boardRef, { cards: currentCardsData });
+                window.openArchive();
+            }
         }
     </script>
 </body>
